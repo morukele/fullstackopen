@@ -3,12 +3,17 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import ContactService from "./services/ContactService";
+import "./index.css";
+import SuccessNotification from "./components/SuccessNotification";
+import ErrorNotification from "./components/ErrorNotification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     ContactService.getAll().then((initialPersons) => {
@@ -40,15 +45,27 @@ const App = () => {
         )
       ) {
         const updatePerson = { ...existingPerson, number: newNumber };
-        ContactService.update(existingPerson.id, updatePerson).then(
-          (returnedPerson) => {
+        ContactService.update(existingPerson.id, updatePerson)
+          .then((returnedPerson) => {
             setPersons(
               persons.map((p) =>
                 p.id !== existingPerson.id ? p : returnedPerson
               )
             );
-          }
-        );
+            setSuccessMessage(`updated ${returnedPerson.name}`);
+            setTimeout(() => {
+              setSuccessMessage(null);
+            }, 5000);
+          })
+          .catch((e) => {
+            setErrorMessage(
+              `Information of ${updatePerson.name} has been removed from server`
+            );
+            setPersons(persons.filter((p) => p.id !== updatePerson.id));
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          });
       }
     } else {
       const newPerson = {
@@ -59,6 +76,10 @@ const App = () => {
         setPersons(persons.concat(returnedPerson));
         setNewName("");
         setNewNumber("");
+        setSuccessMessage(`Added ${returnedPerson.name}`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
       });
     }
   };
@@ -70,9 +91,9 @@ const App = () => {
         `are you sure you want to delete ${personToDelete.name} contact ?`
       )
     ) {
-      ContactService.remove(personToDelete.id).then((response) =>
-        setPersons(persons.filter((p) => p.id !== personToDelete.id))
-      );
+      ContactService.remove(personToDelete.id).then((deletedPerson) => {
+        setPersons(persons.filter((p) => p.id !== personToDelete.id));
+      });
     }
   };
 
@@ -119,7 +140,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <SuccessNotification message={successMessage} />
+      <ErrorNotification message={errorMessage} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 
       <h2>Add a New Number</h2>
