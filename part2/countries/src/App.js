@@ -5,7 +5,7 @@ import Countries from "./components/Countries";
 function App() {
   const [countries, setCountries] = useState([]);
   const [filter, setFilter] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
     axios.get("https://restcountries.com/v2/all").then((response) => {
@@ -15,11 +15,15 @@ function App() {
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
-    setSelectedCountry("");
+    setSelectedCountry(null);
   };
 
   const handleShowClick = (e) => {
-    setSelectedCountry(e.target.value);
+    var name = e.target.value;
+    var country = countries.find(
+      (c) => c.name.toLowerCase() === name.toLowerCase()
+    );
+    setSelectedCountry(country);
   };
 
   const filteredCountries = countries.filter((c) =>
