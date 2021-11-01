@@ -49,7 +49,7 @@ const App = () => {
           .then((returnedPerson) => {
             setPersons(
               persons.map((p) =>
-                p.id !== existingPerson.id ? p : returnedPerson
+                p.id !== existingPerson.id ? p : updatePerson
               )
             );
             setSuccessMessage(`updated ${returnedPerson.name}`);
@@ -72,15 +72,22 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      ContactService.create(newPerson).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-        setNewName("");
-        setNewNumber("");
-        setSuccessMessage(`Added ${returnedPerson.name}`);
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 5000);
-      });
+      ContactService.create(newPerson)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setNewName("");
+          setNewNumber("");
+          setSuccessMessage(`Added ${returnedPerson.name}`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setErrorMessage(error.response.data.error);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     }
   };
 
