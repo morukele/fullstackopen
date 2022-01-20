@@ -18,6 +18,4 @@ const schema = new mongoose.Schema({
   genres: [{ type: String }],
 });
 
-mongoose.plugin(uniqueValidator);
-
 module.exports = mongoose.model("Book", schema);
