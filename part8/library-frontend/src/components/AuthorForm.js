@@ -23,7 +23,7 @@ const AuthorForm = ({ setError, authors }) => {
     if (result.data && result.data.editAuthor === null) {
       setError("Author not found");
     }
-  }, [result.data]);
+  }, [result.data, setError]);
 
   return (
     <div>
@@ -33,7 +33,7 @@ const AuthorForm = ({ setError, authors }) => {
           Name:{" "}
           <select value={name} onChange={({ target }) => setName(target.value)}>
             {authors.map((a) => (
-              <option>{a.name}</option>
+              <option key={a.name}>{a.name}</option>
             ))}
           </select>
         </div>

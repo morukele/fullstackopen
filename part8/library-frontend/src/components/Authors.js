@@ -14,6 +14,10 @@ const Authors = ({ show, setError }) => {
     return <div>loading...</div>;
   }
 
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   const authors = data.allAuthors;
 
   return (
@@ -22,7 +26,7 @@ const Authors = ({ show, setError }) => {
       <table>
         <tbody>
           <tr>
-            <th></th>
+            <th>author</th>
             <th>born</th>
             <th>books</th>
           </tr>
