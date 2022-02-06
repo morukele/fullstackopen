@@ -12,6 +12,7 @@ const jwt = require("jsonwebtoken");
 const Book = require("./Models/Book");
 const Author = require("./Models/Author");
 const User = require("./Models/User");
+const { resolve } = require("dns");
 
 dotenv.config();
 
@@ -26,6 +27,8 @@ mongoose
   })
   .then(() => console.log("connected to MongoDB"))
   .catch((error) => console.log("error connecting to MongoDB:", error.message));
+
+mongoose.set("debug", true);
 
 const typeDefs = gql`
   type Author {
@@ -71,6 +74,10 @@ const typeDefs = gql`
     editAuthor(name: String!, setBornTo: Int!): Author
     createUser(username: String!, favoriteGenre: String!): User
     login(username: String!, password: String!): Token
+  }
+
+  type Subscription {
+    bookAdded: Book!
   }
 `;
 
@@ -148,6 +155,7 @@ const resolvers = {
           invalidArgs: args,
         });
       }
+
       return book;
     },
     editAuthor: async (root, args, { currentUser }) => {
@@ -208,5 +216,5 @@ const server = new ApolloServer({
 });
 
 server.listen().then(({ url }) => {
-  console.log(`Server ready at ${url}`);
+  console.log(`🚀 Server ready at ${url}`);
 });

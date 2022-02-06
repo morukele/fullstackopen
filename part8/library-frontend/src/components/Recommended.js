@@ -1,18 +1,20 @@
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import React from "react";
 import { ALL_BOOKS, ME } from "../graphql/queries";
+import { get } from "lodash";
 
 const Recommended = ({ show }) => {
+  const result = useQuery(ALL_BOOKS);
   const { loading, error, data } = useQuery(ME);
 
-  const { favoriteGenre, username } = data.me;
+  const me = get(data, "me");
 
   if (!show) {
     return null;
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>loading...</div>;
   }
 
   if (error) {
@@ -20,15 +22,15 @@ const Recommended = ({ show }) => {
   }
 
   const filteredBooks = result.data.allBooks.filter((b) =>
-    b.genres.map((g) => g.toLowerCase()).includes(favoriteGenre)
+    b.genres.map((g) => g.toLowerCase()).includes(me.favoriteGenre)
   );
 
   return (
     <div>
       <h1>Recommendations</h1>
       <p>
-        {username} these books are in your favorite genre:{" "}
-        <b>{favoriteGenre}</b>{" "}
+        {me.username} these books are in your favorite genre:{" "}
+        <b>{me.favoriteGenre}</b>{" "}
       </p>
       <table>
         <tbody>

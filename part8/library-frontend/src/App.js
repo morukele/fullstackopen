@@ -31,6 +31,7 @@ const App = () => {
     localStorage.clear();
     setToken(null);
     client.clearStore();
+    setPage("login");
   };
 
   return (
@@ -49,23 +50,20 @@ const App = () => {
         ) : null}
         {token ? <button onClick={() => logout()}>log out</button> : null}
       </div>
-
       <Notification errorMessage={errorMessage} />
-
       <Authors show={page === "authors"} setError={notify} />
-
       <Books show={page === "books"} />
-
       <NewBook show={page === "add"} setError={notify} />
-
-      <Recommended show={page === "recommended"} setError={notify} />
-
       <LoginForm
         show={page === "login"}
         setError={notify}
         setToken={setToken}
         setPage={setPage}
       />
+      {token ? (
+        <Recommended show={page === "recommended"} setError={notify} />
+      ) : null}
+      ;
     </div>
   );
 };
